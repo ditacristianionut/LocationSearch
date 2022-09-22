@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Location_Search_Sample.iml" filepath="$PROJECT_DIR$/.idea/modules/Location_Search_Sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Location_Search_Sample.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.iml" filepath="$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.main.iml" filepath="$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/locationsearch/Location_Search_Sample.locationsearch.unitTest.iml" />
+    </modules>
+  </component>
+</project>

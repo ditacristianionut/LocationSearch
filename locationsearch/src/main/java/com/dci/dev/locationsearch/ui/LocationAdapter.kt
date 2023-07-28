@@ -37,7 +37,11 @@ class LocationAdapter(private val context: Context) : RecyclerView.Adapter<Locat
 
         fun bind(location: Location, onClick: (Location) -> Unit) {
             binding.textviewTitle.text = location.name
-            binding.textviewSubtitle.text = "${location.region}, ${location.country}"
+            binding.textviewSubtitle.text = if (location.region.isNullOrBlank()) {
+                location.country.orEmpty()
+            } else {
+                "${location.region}, ${location.country}"
+            }
             binding.root.setOnClickListener { onClick.invoke(location) }
         }
 

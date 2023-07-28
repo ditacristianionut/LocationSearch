@@ -6,4 +6,6 @@
     <color name="color_text_secondary">#333333</color>
     <color name="basic_red">#FF4747</color>
 
+    <color name="grey_secondary">#8094A0</color>
+
 </resources>

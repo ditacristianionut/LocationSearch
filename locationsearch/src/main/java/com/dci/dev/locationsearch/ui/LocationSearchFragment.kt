@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -37,6 +38,7 @@ class LocationSearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentLocationSearchBinding.inflate(inflater, container, false)
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         return binding.root
     }
 
@@ -54,6 +56,9 @@ class LocationSearchFragment : Fragment() {
                 onLocationSelectedCallback?.invoke(it)
             }
         }
+
+        binding.searchview.setBackgroundResource(R.drawable.lib_stroke_rounded_corners_background)
+        binding.buttonSearch.setBackgroundResource(R.drawable.lib_textview_ripple)
 
         binding.recyclerviewResults.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -75,7 +80,7 @@ class LocationSearchFragment : Fragment() {
         }
 
         Glide.with(requireContext())
-            .load(R.drawable.loading_animation)
+            .load(R.drawable.lib_loading_animation)
             .into(binding.imageviewLoading)
     }
 
@@ -163,6 +168,9 @@ class LocationSearchFragment : Fragment() {
 
             searchResult.observe(viewLifecycleOwner) { locationsList ->
                 locationAdapter.addItems(locationsList)
+                binding.textviewResultsCount.isVisible = locationsList.isNotEmpty()
+                binding.textviewResultsCount.text = "${locationsList.size} results"
+
                 if (locationsList.isEmpty()) {
                     when {
                         binding.recyclerviewResults.alpha > 0f -> {

@@ -4,7 +4,9 @@ import android.content.Context
 import com.dci.dev.locationsearch.BuildConfig
 import com.dci.dev.locationsearch.R
 import com.dci.dev.locationsearch.data.api.LocationSearchApi
+import com.dci.dev.locationsearch.data.api.locationiq.LocationIqSearchApi
 import com.dci.dev.locationsearch.data.api.positionstack.PositionStackLocationSearchApi
+import com.dci.dev.locationsearch.data.repository.locationiq.LocationIqSearchRepository
 import com.dci.dev.locationsearch.data.repository.positionstack.PositionStackLocationSearchRepository
 import com.dci.dev.locationsearch.domain.LocationSearchRepository
 import com.squareup.moshi.Moshi
@@ -52,10 +54,11 @@ object Instances {
     private fun provideLocationSearchApi(dataProvider: DataProvider, retrofit: Retrofit): LocationSearchApi {
         return when(dataProvider) {
             is DataProvider.PositionStackDataProvider -> retrofit.create(PositionStackLocationSearchApi::class.java)
+            is DataProvider.LocationIqDataProvider -> retrofit.create(LocationIqSearchApi::class.java)
         }
     }
 
-    fun provideRetrofit(
+    private fun provideRetrofit(
         baseUrl: String,
         okHttpClient: OkHttpClient,
         moshiConverterFactory: MoshiConverterFactory
@@ -67,7 +70,8 @@ object Instances {
             .build()
     }
 
-    fun provideLocationSearchRepository(context: Context, provider: DataProvider): LocationSearchRepository {
+    fun provideLocationSearchRepository(providerType: DataProviderType, context: Context): LocationSearchRepository {
+        val provider = DataProvider.fromType(providerType, context)
         val ioDispatcher = provideIODispatcher()
         val loggingInterceptor = provideLoggingInterceptor()
         val okHttpClient = provideOkHttpClient(loggingInterceptor)
@@ -80,6 +84,11 @@ object Instances {
                 apiKey = provider.apiKey,
                 dispatcher = ioDispatcher
             )
+            is DataProvider.LocationIqDataProvider -> LocationIqSearchRepository(
+                api = provideLocationSearchApi(provider, retrofit) as LocationIqSearchApi,
+                apiKey = provider.apiKey,
+                dispatcher = ioDispatcher
+            )
         }
     }
 
@@ -87,8 +96,25 @@ object Instances {
 
 sealed class DataProvider(val apiKey: String, val baseUrl: String) {
     data class PositionStackDataProvider(private val context: Context): DataProvider(
-        context.getString(
-            R.string.position_stack_api_key),
+        context.getString(R.string.position_stack_api_key),
         PositionStackLocationSearchApi.BASE_URL
     )
+    data class LocationIqDataProvider(private val context: Context): DataProvider(
+        context.getString(R.string.location_iq_api_key),
+        LocationIqSearchApi.BASE_URL
+    );
+
+    companion object {
+        fun fromType(type: DataProviderType, context: Context): DataProvider {
+            return when(type) {
+                DataProviderType.PositionStack -> PositionStackDataProvider(context)
+                DataProviderType.LocationIq -> LocationIqDataProvider(context)
+            }
+        }
+    }
+}
+
+enum class DataProviderType {
+    PositionStack,
+    LocationIq
 }

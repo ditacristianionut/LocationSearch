@@ -41,29 +41,28 @@ data class Address(
 		if (!town.isNullOrBlank()) {
 			displayName += town
 
-			if (!county.isNullOrBlank()) {
-				displayName += ", $county"
-			}
-
-			if (!country.isNullOrBlank()) {
+			if (country.isNullOrBlank()) {
+				if (!county.isNullOrBlank()) {
+					displayName += ", $county"
+				}
+			} else {
 				displayName += ", $country"
 			}
 		} else if (!village.isNullOrBlank()) {
 			displayName += village
 
-			if (!municipality.isNullOrBlank()) {
-				displayName += ", $municipality"
-			}
-
-			if (!county.isNullOrBlank()) {
-				displayName += ", $county"
-			}
-
-			if (!country.isNullOrBlank()) {
+			if (country.isNullOrBlank()) {
+				if (county.isNullOrBlank()) {
+					if (!municipality.isNullOrBlank()) {
+						displayName += ", $municipality"
+					}
+				} else {
+					displayName += ", $county"
+				}
+			} else {
 				displayName += ", $country"
 			}
 		}
-
 		return displayName
 	}
 }

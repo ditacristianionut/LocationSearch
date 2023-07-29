@@ -36,7 +36,7 @@ class LocationSearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLocationSearchBinding.inflate(inflater, container, false)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         return binding.root
@@ -44,7 +44,8 @@ class LocationSearchFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(LocationSearchViewModel::class.java)
+
+        viewModel = ViewModelProvider(this)[LocationSearchViewModel::class.java]
         bindData()
     }
 

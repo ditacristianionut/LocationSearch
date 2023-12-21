@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Location Search Sample</string>
+    <string name="title_activity_main_compose">MainActivityCompose</string>
 </resources>

@@ -3,5 +3,6 @@
     <string name="position_stack_api_key" translatable="false">undefined</string>
     <string name="location_iq_api_key" translatable="false">undefined</string>
     <string name="search">Search</string>
+    <string name="search_hint">Search location</string>
     <string name="location_hint_minimum_size">Type at least 3 letters</string>
 </resources>

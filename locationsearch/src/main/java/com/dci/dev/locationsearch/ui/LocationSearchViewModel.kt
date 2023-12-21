@@ -2,6 +2,8 @@ package com.dci.dev.locationsearch.ui
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,52 +23,50 @@ class LocationSearchViewModel(application: Application) : AndroidViewModel(appli
     private val locationRepository: LocationSearchRepository =
         Instances.provideLocationSearchRepository(LocationSearchConfig.dataProviderType, application)
 
-    private val _loading = MutableLiveData(false)
-    val loading: LiveData<Boolean> = _loading
-
-    private val _isApiError = MutableLiveData(false)
-    val isApiError: LiveData<Boolean> = _isApiError
-
-    private val _isHintVisible = MutableLiveData(true)
-    val isHintVisible: LiveData<Boolean> = _isHintVisible
+    private val _screenState = MutableLiveData<ScreenState>(ScreenState.Idle)
+    val screenState: LiveData<ScreenState> = _screenState
 
     private val _searchResult = MutableLiveData<List<Location>>()
     val searchResult: LiveData<List<Location>> = _searchResult
 
-    private var searchQueryText = ""
+    private var _searchQueryText = mutableStateOf("")
+    val searchQueryText: State<String> get() = _searchQueryText
+
     private var lastSuccessfulSearchQueryText = ""
 
     fun validateSearchQuery(query: String) {
-        searchQueryText = query
-        _isHintVisible.postValue(query.length < 3)
+        _searchQueryText.value = query
+        if (query.isBlank()) {
+            _searchResult.postValue(emptyList())
+            lastSuccessfulSearchQueryText = ""
+            _screenState.postValue(ScreenState.Idle)
+        }
     }
 
     fun search() {
-        if (searchQueryText != lastSuccessfulSearchQueryText && searchQueryText.length >= 3) {
-            _loading.postValue(true)
-            _isApiError.postValue(false)
+        if (_searchQueryText.value != lastSuccessfulSearchQueryText && _searchQueryText.value.length >= 3) {
+            _screenState.postValue(ScreenState.Loading)
+
             viewModelScope.launch {
-                locationRepository.search(searchQueryText)
+                locationRepository.search(_searchQueryText.value)
                     .onEach {
-                        delay(1000L)
+                        delay(2000L)
                     }
                     .catch {
-                        _loading.postValue(false)
-                        _isApiError.postValue(true)
+                        _screenState.postValue(ScreenState.Error)
                         Log.e("LocationSearch", "Failed to get location:\n ${it.stackTrace}")
                     }
                     .collect {
-                        _loading.postValue(false)
                         when(it) {
                             is NetworkResult.Success -> {
-                                _isApiError.postValue(false)
-                                lastSuccessfulSearchQueryText = searchQueryText
+                                _screenState.postValue(ScreenState.Success)
+                                lastSuccessfulSearchQueryText = _searchQueryText.value
                                 it.data?.let { data ->
                                     _searchResult.postValue(data.sortedBy { it.country })
                                 }
                             }
                             is NetworkResult.Error -> {
-                                _isApiError.postValue(true)
+                                _screenState.postValue(ScreenState.Error)
                                 lastSuccessfulSearchQueryText = ""
                                 Log.e("LocationSearch", "Failed to get location:\n ${it.message}")
                             }
@@ -76,4 +76,11 @@ class LocationSearchViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+}
+
+sealed class ScreenState {
+    object Idle: ScreenState()
+    object Loading: ScreenState()
+    object Success: ScreenState()
+    object Error: ScreenState()
 }

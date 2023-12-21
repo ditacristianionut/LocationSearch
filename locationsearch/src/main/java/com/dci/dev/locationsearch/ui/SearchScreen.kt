@@ -19,6 +19,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -212,7 +214,7 @@ fun SearchScreen(
                         )
                     },
                     trailingIcon = {
-                        AnimatedVisibility(visible = searchQuery.isNotBlank()) {
+                        AnimatedVisibility(visible = searchQuery.length >= 3) {
 
                             val alpha = if (isLoading) 0.5f else 1f
 
@@ -330,15 +332,27 @@ fun SearchScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                Box(
+                Column(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Image(
                         modifier = Modifier.fillMaxWidth(0.65f),
                         contentScale = ContentScale.Inside,
                         painter = painterResource(id = R.drawable.lib_page_not_found),
                         contentDescription = null
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxWidth(),
+                        text = stringResource(id = R.string.lib_api_error),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = colorPalette.errorColor,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -387,7 +401,13 @@ fun SearchResultRowView(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { onClick(location) },
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(
+                    radius = 8.dp,
+                    color = colorPalette.secondaryAccentColor.copy(alpha = 0.7f)
+                )
+            ) { onClick(location) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
